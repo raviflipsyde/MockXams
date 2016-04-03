@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:amq="http://activemq.apache.org/schema/core"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
+     	http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
+     	http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+  		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd">
+
+
+
+
+
+
+	<mvc:annotation-driven />
+	<bean
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+
+	<mvc:resources mapping="/resources/**" location="/WEB-INF/resources/" />
+
+	<context:annotation-config />
+	<context:component-scan base-package="myTest.controller" />
+
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView"></property>
+		<property name="prefix" value="/WEB-INF/view/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:messages"></property>
+		<property name="defaultEncoding" value="UTF-8"></property>
+	</bean>
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		p:location="/WEB-INF/jdbc.properties"></bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
+		p:url="${jdbc.databaseurl}" p:username="${jdbc.username}" p:password="${jdbc.password}"></bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+		<property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${jdbc.dialect}</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="show_sql">true</prop>
+				<prop key="format_sql">true</prop>
+				<prop key="use_sql_comments">true</prop>
+<!-- 				<prop key="hibernate.hbm2ddl.auto">create-drop</prop> -->
+								<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="userDAO" class="myTest.dao.UserDaoImpl"></bean>
+	<bean id="userManager" class="myTest.manager.UserManagerImpl"></bean>
+	<bean id="questionDAO" class="myTest.dao.QuestionDaoImpl"></bean>
+	<bean id="questionManager" class="myTest.manager.QuestionManagerImpl"></bean>
+	<!-- <bean id="sectionDAO" class="myTest.dao.SectionDaoImpl"></bean> -->
+	<bean id="topicDAO" class="myTest.dao.TopicDaoImpl"></bean>
+	<!-- <bean id="tagsDAO" class="myTest.dao.TagsDaoImpl"></bean> -->
+	<bean id="qSetDAO" class="myTest.dao.QuestionSetDaoImpl"></bean>
+	<bean id="testDAO" class="myTest.dao.Test1DaoImpl"></bean>
+	<bean id="testManager" class="myTest.manager.TestManagerImpl"></bean>
+	<bean id="userTestDataDao" class="myTest.dao.UserTestDataDaoImpl"></bean>
+	<bean id="userTestDataManager" class="myTest.manager.UserTestDataManagerImpl"></bean>
+	<bean id="userTestDataAnswersDao" class="myTest.dao.UserTestDataAnswersDaoImpl"></bean>
+	<bean id="userTestDataAnswersManager" class="myTest.manager.UserTestDataAnswersManagerImpl"></bean>
+	<bean id="answersDao" class="myTest.dao.AnswersDaoImpl"></bean>
+
+
+
+	<tx:annotation-driven />
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- JMS Connection beans -->
+	<bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+
+
+	<bean id="pooledJmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="connectionFactory" ref="connectionFactory"/>
+				</bean>
+				
+				
+	<bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="answer.queue" />
+	</bean>
+
+
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="pooledJmsFactory" />
+		<property name="defaultDestinationName" value="answer.queue" />
+	</bean>
+
+	<bean id="answerHandler" class="myTest.manager.AnswerAlertHandler">
+	</bean>
+
+<!-- 	<jms:listener-container connection-factory="connectionFactory"> -->
+<!-- 		<jms:listener destination="answer.persist" ref="answerHandler" -->
+<!-- 			method="processAnswers" /> -->
+<!-- 	</jms:listener-container> -->
+
+	<bean id="jmsContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="queue" />
+		<property name="messageListener" ref="answerHandler" />			
+	</bean>
+
+
+<bean id="multipartResolver"
+    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+    <!-- one of the properties available; the maximum file size in bytes -->
+    <property name="maxUploadSize" value="100000"/>
+</bean>
+
+</beans>

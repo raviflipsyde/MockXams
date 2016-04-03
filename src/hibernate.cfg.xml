@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+ 
+<hibernate-configuration>
+    <session-factory>
+    <property name="hibernate.show_sql">true</property>
+        <mapping class="myTest.entities.User"></mapping>
+        <mapping class="myTest.entities.Question"></mapping>
+        <mapping class="myTest.entities.QuestionSet"></mapping>
+<!--         <mapping class="myTest.entities.Section"></mapping> -->
+<!--         <mapping class="myTest.entities.Tags"></mapping> -->
+        <mapping class="myTest.entities.Test1"></mapping>
+        <mapping class="myTest.entities.Topic"></mapping>
+        <mapping class="myTest.entities.UserTestData"></mapping>
+         <mapping class="myTest.entities.Answer"></mapping>     
+          <mapping class="myTest.entities.QuestionType"></mapping>     
+           <mapping class="myTest.entities.UserTestDataAnswers"></mapping>          
+        
+    </session-factory>
+</hibernate-configuration>
